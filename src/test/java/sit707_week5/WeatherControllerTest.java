@@ -1,5 +1,9 @@
 package sit707_week5;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -91,23 +95,32 @@ public class WeatherControllerTest {
 		Assert.assertEquals(wController.getTemperatureAverageFromCache(), averageTemp, 0.001);
 	}
 
+	private long parseTime(String time) {
+		try {
+			SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss");
+			Date date = dateformat.parse(time);
+			return date.getTime();
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
 	@Test
 	public void testTemperaturePersist() {
-		/*
-		 * Remove below comments ONLY for 5.3C task.
-		 */
-//		System.out.println("+++ testTemperaturePersist +++");
-//		
-//		// Initialise controller
-//		WeatherController wController = WeatherController.getInstance();
-//		
-//		String persistTime = wController.persistTemperature(10, 19.5);
-//		String now = new SimpleDateFormat("H:m:s").format(new Date());
-//		System.out.println("Persist time: " + persistTime + ", now: " + now);
-//		
-//		Assert.assertTrue(persistTime.equals(now));
-//		
-//		wController.close();
+
+		// Persist temperature data with hour 10 and temperature 19.5
+		String persistTime = wController.persistTemperature(10, 19.5);
+
+		// Get the current time and format
+		String now = new SimpleDateFormat("HH:mm:ss").format(new Date());
+
+		System.out.println("Persist time: " + persistTime + ", now: " + now);
+
+		// Assert that the time difference between persisted time and current time is
+		// within tolerance
+		Assert.assertTrue("Time difference is more than 2 seconds.",
+				Math.abs(parseTime(persistTime) - parseTime(now)) <= 2000);
 	}
 
 }
